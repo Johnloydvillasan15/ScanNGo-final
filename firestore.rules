@@ -1,0 +1,37 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    function isAdmin() {
+      return isSignedIn() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    match /users/{userId} {
+      allow read: if isSignedIn() && request.auth.uid == userId;
+      allow create: if isSignedIn() && request.auth.uid == userId;
+      // Role changes are made manually by you in the console, not by the app.
+      allow update: if isSignedIn() && request.auth.uid == userId &&
+        request.resource.data.role == resource.data.role;
+    }
+
+    match /routes/{routeId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    match /bookings/{bookingId} {
+      // Any signed-in rider can read bookings — needed to show live seat
+      // availability on the Home screen. Writes remain restricted below.
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update: if isSignedIn() && resource.data.userId == request.auth.uid;
+      // Deleting a route (admin) cascades to its bookings, and riders can
+      // delete their own past bookings from the History screen.
+      allow delete: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+    }
+  }
+}

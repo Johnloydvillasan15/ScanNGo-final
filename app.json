@@ -1,0 +1,35 @@
+{
+  "expo": {
+    "name": "Scan&Go",
+    "slug": "scan-and-go",
+    "version": "2.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "backgroundColor": "#E4E4E4"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "android": {
+      "package": "com.scanandgo.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#E4E4E4"
+      }
+    },
+    "ios": {
+      "bundleIdentifier": "com.scanandgo.app",
+      "supportsTablet": false,
+      "infoPlist": {
+        "NSCameraUsageDescription": "Scan&Go uses the camera to scan passenger ticket QR codes at boarding."
+      }
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Scan&Go uses the camera to scan passenger ticket QR codes at boarding."
+        }
+      ]
+    ]
+  }
+}
